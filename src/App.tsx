@@ -42,7 +42,6 @@ export default function App() {
 
   // HISTORY
   const [scanHistory, setScanHistory] = useState<any[]>([]);
-  const [isLoadingHistory, setIsLoadingHistory] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // --- AUTO-LOGIN & FETCH ---
@@ -407,7 +406,7 @@ export default function App() {
             </div>
 
             {results && (
-              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={dropletSpring} className="space-y-4">
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={dropletSpring as any} className="space-y-4">
                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-6 rounded-[2rem] flex flex-col items-center relative overflow-hidden">
                   <h3 className="text-white font-bold text-lg mb-1">{results.productName || "Processing Level"}</h3>
                   <div className="relative w-36 h-36 mt-2">
@@ -484,14 +483,14 @@ export default function App() {
             <p className="text-white/60 text-sm mb-6">Scan two products to see which is healthier.</p>
             <div className="flex gap-4">
               <div className="flex-1">
-                <input type="file" ref={fileRefA} onChange={(e) => handleImageUpload(e, (url) => setImgA(prev => ({ ...prev, url } as any)), (base64) => setImgA(prev => ({ ...prev, base64 } as any)))} className="hidden" />
+                <input type="file" ref={fileRefA} onChange={(e) => handleImageUpload(e, (url: string) => setImgA(prev => ({ ...prev, url } as any)), (base64: string) => setImgA(prev => ({ ...prev, base64 } as any)))} className="hidden" />
                 <div onClick={() => fileRefA.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
                   {imgA?.url ? <img src={imgA.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product A</p>}
                 </div>
               </div>
               <div className="flex items-center justify-center text-white/30 font-black italic">VS</div>
               <div className="flex-1">
-                <input type="file" ref={fileRefB} onChange={(e) => handleImageUpload(e, (url) => setImgB(prev => ({ ...prev, url } as any)), (base64) => setImgB(prev => ({ ...prev, base64 } as any)))} className="hidden" />
+                <input type="file" ref={fileRefB} onChange={(e) => handleImageUpload(e, (url: string) => setImgB(prev => ({ ...prev, url } as any)), (base64: string) => setImgB(prev => ({ ...prev, base64 } as any)))} className="hidden" />
                 <div onClick={() => fileRefB.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
                   {imgB?.url ? <img src={imgB.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product B</p>}
                 </div>
