@@ -58,7 +58,6 @@ export default function App() {
   }, []);
 
   const fetchHistory = async (userId: string) => {
-    setIsLoadingHistory(true);
     try {
       const q = query(collection(db, "scans"), where("userId", "==", userId));
       const querySnapshot = await getDocs(q);
@@ -68,7 +67,7 @@ export default function App() {
     } catch (err) {
       console.error("Failed to load history", err);
     } finally {
-      setIsLoadingHistory(false);
+
     }
   };
 
