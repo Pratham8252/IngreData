@@ -272,7 +272,21 @@ export default function App() {
             <div className="mx-auto bg-indigo-500/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 border border-indigo-500/50">
               <img src="/favicon.png" alt="IngreData Logo" className="w-10 h-10 object-contain" />
             </div>
-            <h1 className="text-3xl font-extrabold text-white tracking-tight">IngreData</h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-2 select-none">
+              <span>IngreData</span>
+              <span
+                className="ml-1 px-2 py-0.5 text-xs font-black uppercase rounded tracking-widest animate-pulse"
+                style={{
+                  color: '#00f2fe',
+                  background: 'rgba(0, 242, 254, 0.15)',
+                  border: '1px solid rgba(0, 242, 254, 0.6)',
+                  textShadow: '0 0 8px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4)',
+                  boxShadow: '0 0 12px rgba(0, 242, 254, 0.2), inset 0 0 6px rgba(0, 242, 254, 0.2)'
+                }}
+              >
+                AI
+              </span>
+            </h1>
             <p className="text-white/50 text-sm mt-2">{isLogin ? "Welcome Back" : "Create Account"}</p>
           </div>
 
