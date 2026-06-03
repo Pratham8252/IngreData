@@ -337,18 +337,22 @@ export default function App() {
           <img src="/favicon.png" alt="IngreData logo" className="w-6 h-6 rounded-md object-contain" />
           <span>IngreData</span>
           <span
-            className="ml-1 px-2 py-0.5 text-[10px] font-black uppercase rounded tracking-widest animate-pulse"
+            className="ml-1 flex items-center animate-pulse"
             style={{
               color: '#00f2fe',
-              background: 'rgba(0, 242, 254, 0.15)',
-              border: '1px solid rgba(0, 242, 254, 0.6)',
-              textShadow: '0 0 8px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4)',
-              boxShadow: '0 0 12px rgba(0, 242, 254, 0.2), inset 0 0 6px rgba(0, 242, 254, 0.2)'
+              filter: 'drop-shadow(0 0 5px rgba(0, 242, 254, 0.9)) drop-shadow(0 0 15px rgba(0, 242, 254, 0.4))'
             }}
           >
-            AI
+            <svg viewBox="0 0 65 30" className="w-12 h-6" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+              {/* Interwoven 'A' loop */}
+              <path d="M 8 24 L 17 6 C 18 4 20 4 21 6 L 30 24" />
+              <path d="M 12 17 C 16 17 24 17 27 17 C 31 17 34 14 34 10 C 34 6 38 6 42 6" />
+              {/* Interconnected 'I' */}
+              <path d="M 42 6 L 42 24" />
+              <circle cx="42" cy="1" r="2" fill="currentColor" stroke="none" />
+            </svg>
           </span>
-        </h1>
+        </h3>
         <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none">
           <option value="English">EN</option><option value="Hindi">HI</option>
         </select>
