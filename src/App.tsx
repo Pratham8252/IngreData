@@ -352,7 +352,7 @@ export default function App() {
               <circle cx="42" cy="1" r="2" fill="currentColor" stroke="none" />
             </svg>
           </span>
-        </h3>
+        </h1>
         <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none">
           <option value="English">EN</option><option value="Hindi">HI</option>
         </select>
