@@ -333,23 +333,68 @@ export default function App() {
 
       {/* HEADER */}
       <div className="w-full max-w-md p-4 flex justify-between items-center z-10 sticky top-0 bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
-        <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2 select-none">
-          <img src="/favicon.png" alt="IngreData logo" className="w-6 h-6 rounded-md object-contain" />
-          <span>IngreData</span>
+        <h1 className="text-xl font-bold text-white flex items-center gap-3">
+          {/* Standard Logo/Favicon and Text */}
+          <img src="/favicon.png" alt="IngreData" className="w-6 h-6 object-contain" />
+          <span className="font-extrabold tracking-tight text-white text-3xl select-none">IngreData</span>
+
+          {/* Exact SVG matching the requested image layout */}
           <span
-            className="ml-1 flex items-center animate-pulse"
-            style={{
-              color: '#00f2fe',
-              filter: 'drop-shadow(0 0 5px rgba(0, 242, 254, 0.9)) drop-shadow(0 0 15px rgba(0, 242, 254, 0.4))'
-            }}
+            className="flex items-center justify-center animate-pulse drop-shadow-2xl ml-1"
+            style={{ filter: 'drop-shadow(0 0 12px rgba(66, 245, 194, 0.4))' }}
           >
-            <svg viewBox="0 0 65 30" className="w-12 h-6" fill="none" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
-              {/* Interwoven 'A' loop */}
-              <path d="M 8 24 L 17 6 C 18 4 20 4 21 6 L 30 24" />
-              <path d="M 12 17 C 16 17 24 17 27 17 C 31 17 34 14 34 10 C 34 6 38 6 42 6" />
-              {/* Interconnected 'I' */}
-              <path d="M 42 6 L 42 24" />
-              <circle cx="42" cy="1" r="2" fill="currentColor" stroke="none" />
+            <svg viewBox="0 0 100 100" className="w-[55px] h-[55px]">
+              <defs>
+                {/* Cyan to Blue Gradient for Text and Border */}
+                <linearGradient id="ai-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#42f5c2" />
+                  <stop offset="100%" stopColor="#007bff" />
+                </linearGradient>
+
+                {/* Pink to Purple Gradient for Stars */}
+                <linearGradient id="star-grad" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#ff99cc" />
+                  <stop offset="100%" stopColor="#9933ff" />
+                </linearGradient>
+
+                {/* The reusable four-pointed curved star shape */}
+                <g id="sparkle">
+                  <path d="M0,-14 C0,-2 2,0 14,0 C2,0 0,2 0,14 C0,2 -2,0 -14,0 C-2,0 0,-2 0,-14 Z" fill="url(#star-grad)" />
+                </g>
+              </defs>
+
+              {/* Glowing Border Track */}
+              <path
+                d="M 45 18 L 75 18 A 18 18 0 0 1 93 36 L 93 74 A 18 18 0 0 1 75 92 L 35 92 A 18 18 0 0 1 17 74 L 17 55"
+                fill="none"
+                stroke="url(#ai-grad)"
+                strokeWidth="6.5"
+                strokeLinecap="round"
+              />
+
+              {/* AI Text */}
+              <text
+                x="55"
+                y="71"
+                fontFamily="system-ui, -apple-system, sans-serif"
+                fontWeight="900"
+                fontSize="38"
+                fill="url(#ai-grad)"
+                textAnchor="middle"
+              >
+                AI
+              </text>
+
+              {/* Sparkles positioned exactly like the image */}
+              <g transform="translate(32, 22) scale(1.1)">
+                <use href="#sparkle" />
+              </g>
+              <g transform="translate(18, 48) scale(0.9)">
+                <use href="#sparkle" />
+              </g>
+              <g transform="translate(10, 22) scale(0.55)">
+                <use href="#sparkle" />
+              </g>
             </svg>
           </span>
         </h1>
