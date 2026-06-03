@@ -203,9 +203,22 @@ export default function App() {
         model: "gemini-2.5-flash",
         generationConfig: { temperature: 0, topK: 1 }
       });
-      const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON: { "winner": "Product A or Product B", "reason": "1 sentence why", "productA": { "name": "Guess name", "intensity": (0-100 score), "redFlags": ["flag 1", "flag 2"] }, "productB": { "name": "Guess name", "intensity": (0-100 score), "redFlags": ["flag 1", "flag 2"] } }`;
+      const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON: { "winner": "Product A or Product B", "reason": "...", "productA": [{name, function, desc}], "productB": [{name, function, desc}] }. CRITICAL RULE: If the ingredients of Product A and Product B are identical (even if the photos look different), do NOT generate a comparison. You MUST return exactly this JSON and nothing else: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
+
       const result = await model.generateContent([prompt, { inlineData: { data: imgA.base64, mimeType: "image/jpeg" } }, { inlineData: { data: imgB.base64, mimeType: "image/jpeg" } }]);
-      setCompareResults(JSON.parse(result.response.text().replace(/```json|```/g, '').trim()));
+
+      const cleanedText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
+      const parsedData = JSON.parse(cleanedText);
+
+      // --- ZERO-RISK SAFETY SHIELD ---
+      if (parsedData?.isIdentical === true) {
+        setIsComparing(false);
+        alert("These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown of this product.");
+        return;
+      }
+      // -------------------------------
+
+      setCompareResults(parsedData);
     } catch (err) { alert("Comparison failed."); }
     finally { setIsComparing(false); }
   };
