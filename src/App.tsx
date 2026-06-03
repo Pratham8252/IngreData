@@ -335,7 +335,7 @@ export default function App() {
       <div className="w-full max-w-md p-4 flex justify-between items-center z-10 sticky top-0 bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
         <h1 className="text-xl font-bold text-white flex items-center gap-3">
           {/* Standard Logo/Favicon and Text */}
-          <img src="/favicon.png" alt="IngreData" className="w-6 h-6 object-contain" />
+          <img src="/favicon.png" alt="IngreData" className="w-10 h-10 rounded-md object-contain shadow-sm" />
           <span className="font-extrabold tracking-tight text-white text-3xl select-none">IngreData</span>
 
           {/* Exact SVG matching the requested image layout */}
