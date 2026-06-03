@@ -272,21 +272,7 @@ export default function App() {
             <div className="mx-auto bg-indigo-500/20 w-16 h-16 rounded-full flex items-center justify-center mb-4 border border-indigo-500/50">
               <img src="/favicon.png" alt="IngreData Logo" className="w-10 h-10 object-contain" />
             </div>
-            <h1 className="text-3xl font-extrabold tracking-tight text-white flex items-center gap-2 select-none">
-              <span>IngreData</span>
-              <span
-                className="ml-1 px-2 py-0.5 text-xs font-black uppercase rounded tracking-widest animate-pulse"
-                style={{
-                  color: '#00f2fe',
-                  background: 'rgba(0, 242, 254, 0.15)',
-                  border: '1px solid rgba(0, 242, 254, 0.6)',
-                  textShadow: '0 0 8px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4)',
-                  boxShadow: '0 0 12px rgba(0, 242, 254, 0.2), inset 0 0 6px rgba(0, 242, 254, 0.2)'
-                }}
-              >
-                AI
-              </span>
-            </h1>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight">IngreData</h1>
             <p className="text-white/50 text-sm mt-2">{isLogin ? "Welcome Back" : "Create Account"}</p>
           </div>
 
@@ -347,9 +333,21 @@ export default function App() {
 
       {/* HEADER */}
       <div className="w-full max-w-md p-4 flex justify-between items-center z-10 sticky top-0 bg-slate-950/80 backdrop-blur-xl border-b border-white/10">
-        <h1 className="text-xl font-black text-white flex items-center gap-2">
-          <img src="/favicon.png" alt="IngreData Logo" className="w-6 h-6 rounded-md object-contain" />
-          IngreData
+        <h1 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2 select-none">
+          <img src="/favicon.png" alt="IngreData logo" className="w-6 h-6 rounded-md object-contain" />
+          <span>IngreData</span>
+          <span
+            className="ml-1 px-2 py-0.5 text-[10px] font-black uppercase rounded tracking-widest animate-pulse"
+            style={{
+              color: '#00f2fe',
+              background: 'rgba(0, 242, 254, 0.15)',
+              border: '1px solid rgba(0, 242, 254, 0.6)',
+              textShadow: '0 0 8px rgba(0, 242, 254, 0.8), 0 0 20px rgba(0, 242, 254, 0.4)',
+              boxShadow: '0 0 12px rgba(0, 242, 254, 0.2), inset 0 0 6px rgba(0, 242, 254, 0.2)'
+            }}
+          >
+            AI
+          </span>
         </h1>
         <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none">
           <option value="English">EN</option><option value="Hindi">HI</option>
