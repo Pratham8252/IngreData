@@ -481,38 +481,50 @@ export default function ScannerApp() {
                         {results && (
                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={dropletSpring as any} className="space-y-4">
                                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-6 rounded-[2rem] flex flex-col items-center relative overflow-hidden">
-                                    <h3 className="text-white font-bold text-lg mb-1">{results.productName || "Processing Level"}</h3>
-                                    <div className="flex items-center justify-center gap-6 mt-4 w-full">
-                                        {/* The Circular Speedometer (Left Side) */}
-                                        <div className="relative w-32 h-32 shrink-0">
+                                    <h3 className="text-white font-bold text-lg mb-1 text-center">{results.productName || "Processing Level"}</h3>
+
+                                    {/* Container for Centered Speedometer & Right-Aligned Legend */}
+                                    <div className="relative w-full flex justify-center items-center mt-4 mb-4">
+
+                                        {/* CENTER: The Speedometer */}
+                                        <div className="relative w-36 h-36">
                                             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                                 <circle cx="50" cy="50" r="40" className="stroke-slate-800" strokeWidth="12" fill="none" />
                                                 <circle cx="50" cy="50" r="40" className={`transition-all duration-1000 ease-out ${getIntensityColor(results.processingIntensity)}`} strokeWidth="12" fill="none" strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * results.processingIntensity) / 100} strokeLinecap="round" />
                                             </svg>
                                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                                <span className={`text-3xl font-black ${getIntensityColor(results.processingIntensity).split(' ')[0]}`}>{results.processingIntensity}</span>
+                                                <span className={`text-4xl font-black ${getIntensityColor(results.processingIntensity).split(' ')[0]}`}>{results.processingIntensity}</span>
                                             </div>
                                         </div>
 
-                                        {/* The Color Legend (Right Side) */}
-                                        <div className="flex flex-col gap-3">
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
-                                                <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Minimal</span>
+                                        {/* RIGHT SIDE: The Tiny Legend */}
+                                        <div className="absolute right-0 flex flex-col gap-2">
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.5)] shrink-0"></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[8px] font-bold text-white/80 uppercase leading-none">Minimally</span>
+                                                    <span className="text-[7px] font-bold text-white/40 uppercase">Processed</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div>
-                                                <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Moderate</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_5px_rgba(245,158,11,0.5)] shrink-0"></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[8px] font-bold text-white/80 uppercase leading-none">Moderately</span>
+                                                    <span className="text-[7px] font-bold text-white/40 uppercase">Processed</span>
+                                                </div>
                                             </div>
-                                            <div className="flex items-center gap-2">
-                                                <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></div>
-                                                <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Highly</span>
+                                            <div className="flex items-center gap-1.5">
+                                                <div className="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_5px_rgba(244,63,94,0.5)] shrink-0"></div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[8px] font-bold text-white/80 uppercase leading-none">Highly</span>
+                                                    <span className="text-[7px] font-bold text-white/40 uppercase">Processed</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Legal Shield */}
-                                    <p className="text-[9px] text-slate-500 mt-5 text-center leading-relaxed px-2 w-full">
+                                    <p className="text-[9px] text-slate-500 text-center leading-relaxed px-2 w-full mt-1">
                                         *This score estimates industrial processing. It is not a health rating or medical advice.
                                     </p>
                                 </div>
