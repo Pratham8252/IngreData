@@ -480,22 +480,12 @@ export default function ScannerApp() {
 
                         {results && (
                             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={dropletSpring as any} className="space-y-4">
-                                <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-6 rounded-[2rem] flex flex-col items-center relative overflow-hidden">
-                                    <h3 className="text-white font-bold text-lg mb-1">{results.productName || "Processing Level"}</h3>
-                                    <div className="relative w-36 h-36 mt-2">
-                                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                                            <circle cx="50" cy="50" r="40" className="stroke-slate-800" strokeWidth="12" fill="none" />
-                                            <circle cx="50" cy="50" r="40" className={`transition-all duration-1000 ease-out ${getIntensityColor(results.processingIntensity)}`} strokeWidth="12" fill="none" strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * results.processingIntensity) / 100} strokeLinecap="round" />
-                                        </svg>
-                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
-                                            <span className={`text-4xl font-black ${getIntensityColor(results.processingIntensity).split(' ')[0]}`}>{results.processingIntensity}</span>
-                                        </div>
-                                    </div>
-                                </div>
 
+                                {/* 1. SINGLE SPEEDOMETER & COLOR LEGEND CARD */}
                                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-6 rounded-[2rem] flex flex-col items-center relative overflow-hidden">
-                                    <h3 className="text-white font-bold text-lg mb-1">{results.productName || "Processing Level"}</h3>
-                                    <div className="relative w-36 h-36 mt-2">
+                                    <h3 className="text-white font-bold text-lg mb-1 text-center">{results.productName || "Processing Level"}</h3>
+
+                                    <div className="relative w-36 h-36 mt-4">
                                         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
                                             <circle cx="50" cy="50" r="40" className="stroke-slate-800" strokeWidth="12" fill="none" />
                                             <circle cx="50" cy="50" r="40" className={`transition-all duration-1000 ease-out ${getIntensityColor(results.processingIntensity)}`} strokeWidth="12" fill="none" strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * results.processingIntensity) / 100} strokeLinecap="round" />
@@ -505,27 +495,29 @@ export default function ScannerApp() {
                                         </div>
                                     </div>
 
-                                    {/* Processing Scale & Legal Shield */}
-                                    <div className="w-full mt-8 mb-2 px-2">
-                                        <div className="flex justify-between items-end mb-2">
-                                            <span className="text-sm font-semibold text-green-400">Minimally Processed</span>
-                                            <span className="text-xs font-medium text-slate-400">Processing Level</span>
-                                            <span className="text-sm font-semibold text-blue-400">Highly Processed</span>
+                                    {/* The Color Legend / Meaning Context */}
+                                    <div className="flex flex-wrap justify-center gap-3 mt-6 mb-4">
+                                        <div className="flex items-center gap-1.5 bg-black/30 px-3 py-1.5 rounded-full border border-white/5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
+                                            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Minimal</span>
                                         </div>
-
-                                        <div className="w-full h-4 bg-slate-800 rounded-full overflow-hidden border border-slate-700 relative">
-                                            <div
-                                                className="h-full bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 transition-all duration-500"
-                                                style={{ width: `${results.processingIntensity}%` }}
-                                            ></div>
+                                        <div className="flex items-center gap-1.5 bg-black/30 px-3 py-1.5 rounded-full border border-white/5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div>
+                                            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Moderate</span>
                                         </div>
-
-                                        <p className="text-[10px] text-slate-400 mt-3 text-center leading-relaxed">
-                                            *This scale estimates the level of industrial processing based purely on the ingredient list. It is an objective metric, not a health rating, and does not evaluate product safety or constitute medical advice.
-                                        </p>
+                                        <div className="flex items-center gap-1.5 bg-black/30 px-3 py-1.5 rounded-full border border-white/5">
+                                            <div className="w-2.5 h-2.5 rounded-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]"></div>
+                                            <span className="text-[10px] font-bold text-white/70 uppercase tracking-wider">Highly</span>
+                                        </div>
                                     </div>
+
+                                    {/* Legal Shield */}
+                                    <p className="text-[10px] text-slate-400 mt-2 text-center leading-relaxed px-2">
+                                        *This score estimates industrial processing based purely on the ingredient list. It is an objective metric, not a health rating or medical advice.
+                                    </p>
                                 </div>
 
+                                {/* 2. HEALTH SUMMARY CARD */}
                                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-5 rounded-[2rem] shadow-xl">
                                     <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2"><Zap className="w-5 h-5 text-amber-400" /> Health Summary</h3>
                                     <div className="space-y-3">
@@ -555,6 +547,7 @@ export default function ScannerApp() {
                                     </div>
                                 </div>
 
+                                {/* 3. INGREDIENTS CARD */}
                                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-5 rounded-[2rem] shadow-xl">
                                     <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2"><Beaker className="w-5 h-5 text-indigo-400" /> Ingredients</h3>
                                     <div className="space-y-3">
@@ -570,6 +563,7 @@ export default function ScannerApp() {
                                     </div>
                                 </div>
 
+                                {/* 4. BUTTONS */}
                                 <div className="flex gap-3">
                                     <button onClick={() => { setSelectedImage(null); setResults(null); }} className="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 text-white py-4 rounded-xl font-bold">Next</button>
                                     <button onClick={handleSaveToVault} disabled={isSaving || saveSuccess} className={`flex-1 py-4 rounded-xl font-bold text-white flex justify-center items-center gap-2 shadow-lg ${saveSuccess ? 'bg-emerald-500' : 'bg-indigo-600'}`}>
@@ -579,57 +573,7 @@ export default function ScannerApp() {
                                 </div>
                             </motion.div>
                         )}
-                    </motion.div>
-                )}
-
-                {/* TAB: COMPARE */}
-                {activeTab === 'compare' && (
-                    <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-                        <h2 className="text-white font-bold text-xl mb-2"><Scale className="inline w-6 h-6 text-indigo-400 mr-2" /> Versus Mode</h2>
-                        <p className="text-white/60 text-sm mb-6">Scan two products to see which is healthier.</p>
-                        <div className="flex gap-4">
-                            <div className="flex-1">
-                                <input type="file" ref={fileRefA} onChange={(e) => handleImageUpload(e, (url: string) => setImgA(prev => ({ ...prev, url } as any)), (base64: string) => setImgA(prev => ({ ...prev, base64 } as any)))} className="hidden" />
-                                <div onClick={() => fileRefA.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
-                                    {imgA?.url ? <img src={imgA.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product A</p>}
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-center text-white/30 font-black italic">VS</div>
-                            <div className="flex-1">
-                                <input type="file" ref={fileRefB} onChange={(e) => handleImageUpload(e, (url: string) => setImgB(prev => ({ ...prev, url } as any)), (base64: string) => setImgB(prev => ({ ...prev, base64 } as any)))} className="hidden" />
-                                <div onClick={() => fileRefB.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
-                                    {imgB?.url ? <img src={imgB.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product B</p>}
-                                </div>
-                            </div>
-                        </div>
-                        {imgA && imgB && !compareResults && (
-                            <button onClick={handleCompare} disabled={isComparing} className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl flex justify-center items-center gap-2">
-                                {isComparing ? <Loader2 className="animate-spin" /> : "Compare Nutrition"}
-                            </button>
-                        )}
-                        {compareResults && (
-                            <div className="bg-white/[0.08] p-6 rounded-[2rem] border border-white/20 mt-6 shadow-xl">
-                                <h3 className="text-center text-white/50 text-xs font-bold uppercase tracking-wider mb-2">The Winner</h3>
-                                <h2 className="text-center text-3xl font-black text-emerald-400 mb-4">{compareResults.winner}</h2>
-                                <p className="text-white/80 text-sm text-center mb-6">"{compareResults.reason}"</p>
-                                <div className="space-y-4">
-                                    {[compareResults.productA, compareResults.productB].map((prod, idx) => (
-                                        <div key={idx} className="bg-black/30 p-4 rounded-xl border border-white/10">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-white font-bold">{prod.name}</span>
-                                                <span className={`px-2 py-1 rounded text-xs font-bold border ${prod.intensity > 50 ? 'border-rose-500 text-rose-400' : 'border-emerald-500 text-emerald-400'}`}>Score: {prod.intensity}</span>
-                                            </div>
-                                            <p className="text-white/50 text-[10px] uppercase">Red Flags:</p>
-                                            <p className="text-white/80 text-xs">{prod.redFlags?.join(', ')}</p>
-                                        </div>
-                                    ))}
-                                </div>
-                                <button onClick={() => { setCompareResults(null); setImgA(null); setImgB(null); }} className="w-full mt-4 bg-white/10 text-white py-3 rounded-xl font-bold">New Comparison</button>
-                            </div>
-                        )}
-                    </motion.div>
-                )}
-
+                        
                 {/* TAB: PROFILE */}
                 {activeTab === 'profile' && (
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
