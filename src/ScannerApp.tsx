@@ -697,7 +697,7 @@ export default function ScannerApp() {
                                 <AlertOctagon className="w-8 h-8" />
                             </div>
                             <h3 className="text-white font-bold text-xl mb-2">Analysis Failed</h3>
-                            <p className="text-white/60 text-sm px-4">We couldn't read the ingredients. Try scanning like this:</p>
+                            <p className="text-white/60 text-sm px-4">We couldn't read the ingredients. Take a quick photo of the ingredients list on the back of the package. Try scanning like this:</p>
                         </div>
 
                         {/* Minimal Vector Animation Area */}
