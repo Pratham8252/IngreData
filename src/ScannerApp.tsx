@@ -493,6 +493,39 @@ export default function ScannerApp() {
                                     </div>
                                 </div>
 
+                                <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-6 rounded-[2rem] flex flex-col items-center relative overflow-hidden">
+                                    <h3 className="text-white font-bold text-lg mb-1">{results.productName || "Processing Level"}</h3>
+                                    <div className="relative w-36 h-36 mt-2">
+                                        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                            <circle cx="50" cy="50" r="40" className="stroke-slate-800" strokeWidth="12" fill="none" />
+                                            <circle cx="50" cy="50" r="40" className={`transition-all duration-1000 ease-out ${getIntensityColor(results.processingIntensity)}`} strokeWidth="12" fill="none" strokeDasharray="251.2" strokeDashoffset={251.2 - (251.2 * results.processingIntensity) / 100} strokeLinecap="round" />
+                                        </svg>
+                                        <div className="absolute inset-0 flex flex-col items-center justify-center">
+                                            <span className={`text-4xl font-black ${getIntensityColor(results.processingIntensity).split(' ')[0]}`}>{results.processingIntensity}</span>
+                                        </div>
+                                    </div>
+
+                                    {/* Processing Scale & Legal Shield */}
+                                    <div className="w-full mt-8 mb-2 px-2">
+                                        <div className="flex justify-between items-end mb-2">
+                                            <span className="text-sm font-semibold text-green-400">Minimally Processed</span>
+                                            <span className="text-xs font-medium text-slate-400">Processing Level</span>
+                                            <span className="text-sm font-semibold text-blue-400">Highly Processed</span>
+                                        </div>
+
+                                        <div className="w-full h-4 bg-slate-800 rounded-full overflow-hidden border border-slate-700 relative">
+                                            <div
+                                                className="h-full bg-gradient-to-r from-green-500 via-teal-500 to-blue-500 transition-all duration-500"
+                                                style={{ width: `${results.processingIntensity}%` }}
+                                            ></div>
+                                        </div>
+
+                                        <p className="text-[10px] text-slate-400 mt-3 text-center leading-relaxed">
+                                            *This scale estimates the level of industrial processing based purely on the ingredient list. It is an objective metric, not a health rating, and does not evaluate product safety or constitute medical advice.
+                                        </p>
+                                    </div>
+                                </div>
+
                                 <div className="bg-white/[0.08] backdrop-blur-[40px] border border-white/20 p-5 rounded-[2rem] shadow-xl">
                                     <h3 className="text-white font-bold text-lg mb-4 flex items-center gap-2"><Zap className="w-5 h-5 text-amber-400" /> Health Summary</h3>
                                     <div className="space-y-3">

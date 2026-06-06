@@ -185,34 +185,34 @@ export default function LandingPage() {
                     </div>
                 </div>
                 <div className="max-w-6xl mx-auto border-t border-slate-800 pt-8 flex flex-col items-center justify-center gap-3 text-slate-600 text-sm text-center">
-                    <span>&copy; {new Date().getFullYear()} IngreData AI. All rights reserved.</span>
-                    <span className="flex items-center gap-2 font-medium">
-                        Powered by
-                        <span className="relative group flex items-center cursor-default">
-                            {/* The glowing aura behind the text */}
-                            <span className="absolute -inset-1 bg-[linear-gradient(to_right,#EA4335,#FBBC05,#34A853,#4285F4)] blur opacity-40 group-hover:opacity-70 transition duration-500 rounded-lg"></span>
+          <span>&copy; {new Date().getFullYear()} IngreData AI. All rights reserved.</span>
+          <span className="flex items-center gap-2 font-medium">
+            Powered by 
+            <span className="relative group flex items-center cursor-default">
+              {/* The glowing aura behind the text */}
+              <span className="absolute -inset-1 bg-[linear-gradient(to_right,#EA4335,#FBBC05,#34A853,#4285F4)] blur opacity-40 group-hover:opacity-70 transition duration-500 rounded-lg"></span>
+              
+              {/* The Google Gemini text in classic Google colors */}
+              <span className="relative text-transparent bg-clip-text bg-[linear-gradient(to_right,#EA4335,#FBBC05,#34A853,#4285F4)] font-extrabold tracking-wide drop-shadow-sm pr-1">
+                Google Gemini
+              </span>
 
-                            {/* The Google Gemini text in classic Google colors */}
-                            <span className="relative text-transparent bg-clip-text bg-[linear-gradient(to_right,#EA4335,#FBBC05,#34A853,#4285F4)] font-extrabold tracking-wide drop-shadow-sm pr-1">
-                                Google Gemini
-                            </span>
-
-                            {/* The Authentic Gemini Star SVG Logo */}
-                            <svg className="w-5 h-5 relative z-10 animate-pulse drop-shadow-[0_0_10px_rgba(141,84,255,0.6)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" fill="url(#gemini-logo-grad)" />
-                                <defs>
-                                    {/* The official cosmic Blue -> Purple -> Pink -> Peach gradient */}
-                                    <linearGradient id="gemini-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                                        <stop offset="0%" stopColor="#2b66ff" />
-                                        <stop offset="33%" stopColor="#8d54ff" />
-                                        <stop offset="66%" stopColor="#ff708d" />
-                                        <stop offset="100%" stopColor="#ffc187" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
-                        </span>
-                    </span>
-                </div>
+              {/* The Authentic Gemini Star SVG Logo */}
+              <svg className="w-5 h-5 relative z-10 animate-pulse drop-shadow-[0_0_10px_rgba(141,84,255,0.6)]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 0C12 6.62742 17.3726 12 24 12C17.3726 12 12 17.3726 12 24C12 17.3726 6.62742 12 0 12C6.62742 12 12 6.62742 12 0Z" fill="url(#gemini-logo-grad)"/>
+                <defs>
+                  {/* The official cosmic Blue -> Purple -> Pink -> Peach gradient */}
+                  <linearGradient id="gemini-logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stopColor="#2b66ff"/>
+                    <stop offset="33%" stopColor="#8d54ff"/>
+                    <stop offset="66%" stopColor="#ff708d"/>
+                    <stop offset="100%" stopColor="#ffc187"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </span>
+          </span>
+        </div>
             </footer>
         </div>
     );
