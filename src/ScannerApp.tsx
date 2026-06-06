@@ -28,6 +28,7 @@ export default function ScannerApp() {
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [imageBase64, setImageBase64] = useState<string | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
+    const [showErrorModal, setShowErrorModal] = useState(false);
     const [results, setResults] = useState<any | null>(null);
     const [isSaving, setIsSaving] = useState(false);
     const [saveSuccess, setSaveSuccess] = useState(false);
@@ -189,7 +190,7 @@ export default function ScannerApp() {
             setResults(JSON.parse(cleanedText));
         } catch (err) {
             console.error(err);
-            alert("Analysis failed. Please try capturing a clearer picture of the ingredient list.");
+            setShowErrorModal(true); // This turns on the modal!
         } finally {
             setIsAnalyzing(false);
         }
@@ -679,6 +680,58 @@ export default function ScannerApp() {
 
                 </div>
             </div>
+            {/* ANIMATED ERROR & TUTORIAL MODAL */}
+            {showErrorModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-slate-900 border border-white/20 p-6 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
+                    >
+                        <button onClick={() => setShowErrorModal(false)} className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/50 hover:text-white transition-colors z-10">
+                            <X className="w-5 h-5" />
+                        </button>
+
+                        <div className="text-center mb-6 mt-2">
+                            <div className="w-16 h-16 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
+                                <AlertOctagon className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl mb-2">Analysis Failed</h3>
+                            <p className="text-white/60 text-sm px-4">We couldn't read the ingredients. Try scanning like this:</p>
+                        </div>
+
+                        {/* Minimal Vector Animation Area */}
+                        <div className="bg-black/40 rounded-3xl p-6 border border-white/5 h-48 flex items-center justify-center relative overflow-hidden shadow-inner mb-6">
+                            <motion.div
+                                animate={{ rotateY: [0, 180, 180, 0], scale: [1, 1.1, 1.1, 1] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-20 h-28 bg-indigo-500/20 border-2 border-indigo-400/50 rounded-xl flex items-center justify-center absolute shadow-lg"
+                            >
+                                <motion.div animate={{ opacity: [0, 1, 1, 0] }} transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }} className="flex flex-col gap-2 w-full px-3">
+                                    <div className="h-1.5 bg-indigo-300 rounded w-full"></div>
+                                    <div className="h-1.5 bg-indigo-300 rounded w-5/6"></div>
+                                    <div className="h-1.5 bg-indigo-300 rounded w-4/6"></div>
+                                </motion.div>
+                            </motion.div>
+
+                            <motion.div
+                                animate={{ x: [100, 0, 0, 100], opacity: [0, 1, 1, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+                                className="w-24 h-36 border-[3px] border-emerald-400/80 rounded-2xl bg-slate-900/80 backdrop-blur-sm absolute flex items-center justify-center shadow-[0_0_25px_rgba(52,211,153,0.2)]"
+                            >
+                                <motion.div animate={{ y: [-40, 40, -40] }} transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }} className="w-full h-0.5 bg-emerald-400 shadow-[0_0_12px_rgba(52,211,153,1)]"></motion.div>
+                            </motion.div>
+                        </div>
+
+                        <button
+                            onClick={() => { setShowErrorModal(false); fileInputRef.current?.click(); }}
+                            className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-indigo-500 transition-all"
+                        >
+                            Try Scanning Again
+                        </button>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
