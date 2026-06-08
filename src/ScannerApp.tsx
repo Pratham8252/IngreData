@@ -160,37 +160,49 @@ export default function ScannerApp() {
                 generationConfig: { temperature: 0, topK: 1 }
             });
 
+            // Prompt includes Gatekeeper Rule AND strict NOVA classification penalty
             const prompt = `
-        Analyze these ingredients. Translate to ${language}. Return ONLY raw JSON. Do not include markdown codeblocks.
-        
-        STRICT SCORING RUBRIC (0-100):
-        - 0-10: Single whole ingredient.
-        - 11-30: Minimally processed.
-        - 31-70: Moderately processed.
-        - 71-100: Ultra-processed.
-        
-        CRITICAL PENALTY OVERRIDE: You must strictly evaluate ALL ingredients. Do not give a low/healthy score just because the primary ingredient is healthy. If there are ANY artificial flavors, colors, artificial sweeteners, or harmful preservatives, the processingIntensity MUST automatically be 75 or higher.
-        
-        {
-          "productName": "Guess generic name",
-          "processingIntensity": (Number 0-100),
-          "synergyAnalysis": { "text": "...", "status": "'safe'|'caution'|'danger'" },
-          "regulatorySummary": {
-            "acute": { "text": "...", "status": "'safe'|'caution'|'danger'" },
-            "chronic": { "text": "...", "status": "'safe'|'caution'|'danger'" },
-            "sources": "Name official food databases used like FDA, FSSAI, WHO, EFSA"
-          },
-          "ingredients": [
-            { "name": "...", "function": "...", "desc": "..." }
-          ]
-        }
-      `;
+        CRITICAL GATEKEEPER RULE: You are an ingredient parser, not a product guesser. First, verify that the image explicitly contains a readable, printed list of ingredients (e.g., text starting with "Ingredients:" or a nutritional panel). If the image is the front of a package, a logo, or does not clearly show written ingredients, you MUST NOT guess the ingredients. You MUST immediately abort and return exactly this JSON and nothing else: { "error": "InvalidImage" }
+        
+        If and ONLY if a clear ingredient list is present, analyze these ingredients. Translate to ${language}. Return ONLY raw JSON. Do not include markdown codeblocks.
+        
+        STRICT SCORING RUBRIC (0-100):
+        - 0-10: Single whole ingredient.
+        - 11-30: Minimally processed.
+        - 31-70: Moderately processed.
+        - 71-100: Ultra-processed.
+        
+        CRITICAL PENALTY OVERRIDE: You must strictly evaluate ALL ingredients. Do not give a low/healthy score just because the primary ingredient is healthy. If there are ANY artificial flavors, colors, artificial sweeteners, or harmful preservatives, the processingIntensity MUST automatically be 75 or higher.
+        
+        {
+          "productName": "Guess generic name",
+          "processingIntensity": (Number 0-100),
+          "synergyAnalysis": { "text": "...", "status": "'safe'|'caution'|'danger'" },
+          "regulatorySummary": {
+            "acute": { "text": "...", "status": "'safe'|'caution'|'danger'" },
+            "chronic": { "text": "...", "status": "'safe'|'caution'|'danger'" },
+            "sources": "Name official food databases used like FDA, FSSAI, WHO, EFSA"
+          },
+          "ingredients": [
+            { "name": "...", "function": "...", "desc": "..." }
+          ]
+        }
+      `;
             const result = await model.generateContent([prompt, { inlineData: { data: imageBase64, mimeType: "image/jpeg" } }]);
             const cleanedText = result.response.text().replace(/```json|```/g, '').trim();
-            setResults(JSON.parse(cleanedText));
+            const parsedData = JSON.parse(cleanedText);
+
+            // --- THE SAFETY CATCH ---
+            if (parsedData.error === "InvalidImage") {
+                throw new Error("No ingredient list found. Front of package scanned.");
+            }
+
+            setResults(parsedData);
+
         } catch (err) {
             console.error(err);
-            setShowErrorModal(true); // This turns on the modal!
+            // Triggers the animated vector tutorial modal
+            setShowErrorModal(true);
         } finally {
             setIsAnalyzing(false);
         }
@@ -690,12 +702,12 @@ export default function ScannerApp() {
                     >
                         <button onClick={() => setShowErrorModal(false)} className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/50 hover:text-white transition-colors z-10">
                             <X className="w-5 h-5" />
-                        </button>
+                        </button>````
 
                         <div className="text-center mb-6 mt-2">
                             <div className="w-16 h-16 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
                                 <AlertOctagon className="w-8 h-8" />
-                            </div>
+                               </div>
                             <h3 className="text-white font-bold text-xl mb-2">Analysis Failed</h3>
                             <p className="text-white/60 text-sm px-4">We couldn't read the ingredients. Take a quick photo of the ingredients list on the back of the package. Try scanning like this:</p>
                         </div>
