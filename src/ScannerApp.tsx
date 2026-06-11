@@ -162,9 +162,11 @@ export default function ScannerApp() {
 
             // Prompt includes Gatekeeper Rule AND strict NOVA classification penalty
             const prompt = `
-        CRITICAL GATEKEEPER RULE: You are an ingredient parser, not a product guesser. First, verify that the image explicitly contains a readable, printed list of ingredients (e.g., text starting with "Ingredients:" or a nutritional panel). If the image is the front of a package, a logo, or does not clearly show written ingredients, you MUST NOT guess the ingredients. You MUST immediately abort and return exactly this JSON and nothing else: { "error": "InvalidImage" }
+        CRITICAL GATEKEEPER RULE: You are an ingredient parser, not a product guesser. First, verify that the image explicitly contains a readable, printed list of ingredients. If the image is the front of a package, a logo, or does not clearly show written ingredients, you MUST NOT guess the ingredients. You MUST immediately abort and return exactly this JSON and nothing else: { "error": "InvalidImage" }
         
-        If and ONLY if a clear ingredient list is present, analyze these ingredients. Translate to ${language}. Return ONLY raw JSON. Do not include markdown codeblocks.
+        If and ONLY if a clear ingredient list is present, analyze these ingredients. Return ONLY raw JSON. Do not include markdown codeblocks.
+
+        TRANSLATION INSTRUCTION: Translate all output string VALUES (descriptions, names, summaries) into ${language}. DO NOT translate the JSON keys. The JSON keys MUST remain exactly as written below in English.
         
         STRICT SCORING RUBRIC (0-100):
         - 0-10: Single whole ingredient.
@@ -411,8 +413,17 @@ export default function ScannerApp() {
                         </svg>
                     </span>
                 </h1>
-                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none">
-                    <option value="English">EN</option><option value="Hindi">HI</option>
+                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none max-w-[110px] truncate cursor-pointer hover:bg-white/10 transition-colors">
+                    <option value="English">English</option>
+                    <option value="Mandarin Chinese">Chinese</option>
+                    <option value="Hindi">Hindi</option>
+                    <option value="Spanish">Spanish</option>
+                    <option value="French">French</option>
+                    <option value="Arabic">Arabic</option>
+                    <option value="Bengali">Bengali</option>
+                    <option value="Russian">Russian</option>
+                    <option value="Portuguese">Portuguese</option>
+                    <option value="Urdu">Urdu</option>
                 </select>
             </div>
 
