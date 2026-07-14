@@ -672,7 +672,7 @@ export default function ScannerApp() {
                         <div className="bg-rose-500/5 border border-rose-500/20 p-6 rounded-[2rem] space-y-4 shadow-xl">
                             <h3 className="text-rose-500 font-bold mb-4">Privacy & Data</h3>
                             <button onClick={deleteAllHistory} className="w-full bg-black/40 border border-white/10 hover:border-red-500 text-white hover:text-red-500 font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"><Trash2 className="w-5 h-5" /> Clear History</button>
-                            <button onClick={handleDeleteAccount} className="w-full bg-red-600/20 border border-red-600/50 hover:bg-red-600/70 text-red-500 hover:text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"><AlertOctagon className="w-5 h-5" /> Delete Account</button>
+                            <button onClick={handleDeleteAccount} className="w-full bg-red-600/20 border border-red-600/50 hover:bg-red-600 text-red-500 hover:text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"><AlertOctagon className="w-5 h-5" /> Delete Account</button>
                         </div>
                         <button onClick={() => signOut(auth)} className="w-full bg-white/10 border border-white/10 text-white font-bold py-4 rounded-xl flex justify-center gap-2"><LogOut className="w-5 h-5" /> Sign Out</button>
                     </motion.div>
