@@ -41,17 +41,6 @@ export default function ScannerApp() {
     const fileRefA = useRef<HTMLInputElement>(null);
     const fileRefB = useRef<HTMLInputElement>(null);
 
-    const [showSignOutModal, setShowSignOutModal] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    
-    const handleSignOut = async () => {
-        try {
-            await auth.signOut();
-        } catch (error) {
-            console.error("Error signing out:", error);
-        }
-    };
-
     // HISTORY
     const [scanHistory, setScanHistory] = useState<any[]>([]);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -141,6 +130,7 @@ export default function ScannerApp() {
     };
 
     const handleDeleteAccount = async () => {
+        if (!confirm("CRITICAL WARNING: This deletes your entire account and all data. This cannot be undone. Type OK to confirm.")) return;
         try {
             await deleteAllHistory();
             await deleteUser(auth.currentUser!);
@@ -770,97 +760,6 @@ export default function ScannerApp() {
                     </motion.div>
                 </div>
             )}
-
-            {/* --- SIGN OUT MODAL --- */}
-            {showSignOutModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="bg-slate-900 border border-white/20 p-6 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
-                    >
-                        {/* Close X Button */}
-                        <button
-                            onClick={() => setShowSignOutModal(false)}
-                            className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/60 hover:text-white transition-colors"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-
-                        <div className="text-center mb-6 mt-2">
-                            {/* Icon Area - Styled with Indigo */}
-                            <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                            </div>
-
-                            <h3 className="text-white font-bold text-xl mb-2">Sign Out</h3>
-                            <p className="text-white/60 text-sm px-4 mb-6">Are you sure you want to sign out of your vault?</p>
-
-                            {/* Action Buttons */}
-                            <div className="flex gap-3 justify-center px-4">
-                                <button
-                                    onClick={() => setShowSignOutModal(false)}
-                                    className="flex-1 py-3 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => { setShowSignOutModal(false); handleSignOut(); }}
-                                    className="flex-1 py-3 rounded-2xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
-                                >
-                                    Sign Out
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-
-            {/* --- DELETE ACCOUNT MODAL --- */}
-            {showDeleteModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="bg-slate-900 border border-white/20 p-6 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
-                    >
-                        {/* Close X Button */}
-                        <button
-                            onClick={() => setShowDeleteModal(false)}
-                            className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/60 hover:text-white transition-colors"
-                        >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-
-                        <div className="text-center mb-6 mt-2">
-                            {/* Icon Area - Styled with Rose (Exactly like Try Again) */}
-                            <div className="w-16 h-16 bg-rose-500/20 text-rose-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-rose-500/30">
-                                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                            </div>
-
-                            <h3 className="text-white font-bold text-xl mb-2">Delete Account</h3>
-                            <p className="text-white/60 text-sm px-4 mb-6">This action is irreversible. All your data will be permanently wiped.</p>
-
-                            {/* Action Buttons */}
-                            <div className="flex gap-3 justify-center px-4">
-                                <button
-                                    onClick={() => setShowDeleteModal(false)}
-                                    className="flex-1 py-3 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 transition-colors"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={() => { setShowDeleteModal(false); handleDeleteAccount(); }}
-                                    className="flex-1 py-3 rounded-2xl font-bold bg-rose-500 hover:bg-rose-600 text-white transition-colors"
-                                >
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    </motion.div>
-                </div>
-            )}
-
         </div>
     );
 }
