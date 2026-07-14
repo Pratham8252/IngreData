@@ -249,6 +249,8 @@ export default function ScannerApp() {
         } catch (error) {
             console.error("FIREBASE REJECTION DATA:", error);
             alert("Failed to save");
+        } finally {
+            setIsSaving(false);
         }
     };
 
