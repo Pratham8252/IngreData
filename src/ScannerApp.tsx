@@ -110,6 +110,7 @@ export default function ScannerApp() {
         return { current: getLetter(curAvg), last: getLetter(lastAvg), count: curCount, toxins };
     };
 
+    
     const grades = calculateGrades();
 
     // --- PRIVACY & DELETION LOGIC ---
@@ -245,8 +246,10 @@ export default function ScannerApp() {
             await addDoc(collection(db, "scans"), { userId: auth.currentUser.uid, timestamp: serverTimestamp(), ...results });
             setSaveSuccess(true);
             fetchHistory(auth.currentUser.uid);
-        } catch (err) { alert("Failed to save"); }
-        finally { setIsSaving(false); }
+        } catch (error) {
+            console.error("FIREBASE REJECTION DATA:", error);
+            alert("Failed to save");
+        }
     };
 
     // ==============================
