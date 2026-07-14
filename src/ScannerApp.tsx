@@ -418,7 +418,7 @@ export default function ScannerApp() {
                         </svg>
                     </span>
                 </h1>
-                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-3 py-1.5 outline-none max-w-[110px] truncate cursor-pointer hover:bg-white/10 transition-colors">
+                <select value={language} onChange={(e) => setLanguage(e.target.value)} className="bg-black/40 text-white text-xs font-bold border border-white/20 rounded-full px-2 sm:px-3 py-1.5 outline-none max-w-[70px] sm:max-w-[110px] truncate cursor-pointer hover:bg-white/10 transition-colors">
                     <option value="English">English</option>
                     <option value="Mandarin Chinese">Chinese</option>
                     <option value="Hindi">Hindi</option>
