@@ -12,18 +12,14 @@ import FAQ from './FAQ';
 import HowToScan from './HowToScan';
 
 export default function App() {
-  // 1. Your Existing Auth State
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  // 2. The New Theme State
   const [isDark, setIsDark] = useState(false);
 
-  // 3. Theme Hydration Lifecycle (Runs once on mount)
+  // Component Hydration: Checks LocalStorage so the app remembers the theme
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme');
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
     if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
       setIsDark(true);
       document.documentElement.classList.add('dark');
@@ -32,7 +28,7 @@ export default function App() {
     }
   }, []);
 
-  // 4. Your Existing Auth Observer Lifecycle
+  // Firebase Auth Observer
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -42,7 +38,7 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  // 5. Theme Toggle Mutator Function
+  // DOM Mutator Function
   const toggleTheme = () => {
     setIsDark(!isDark);
     if (!isDark) {
@@ -54,30 +50,24 @@ export default function App() {
     }
   };
 
-  // 6. Updated Loading State (Prevents flashing by using the dynamic background)
-  if (loading) return <div className="min-h-screen bg-[#e8e5d9] dark:bg-[#020617]" />;
+  if (loading) return <div className="min-h-screen bg-[#FDF6F0] dark:bg-[#020617]" />;
 
-  // 7. Main Render Payload
   return (
-    // The outermost container orchestrates the background color transition globally
-    <div className="min-h-screen transition-colors duration-500 bg-[#e8e5d9] text-slate-900 dark:bg-[#020617] dark:text-slate-50">
+    // THE GLOBAL WALL: Peach in light mode, Navy in dark mode
+    <div className="min-h-screen transition-colors duration-500 bg-[#FDF6F0] text-slate-900 dark:bg-[#020617] dark:text-slate-50">
 
-      {/* Floating Action Button (FAB) placed outside the Router so it exists on every page */}
+      {/* THE TOGGLE BUTTON */}
       <button
         onClick={toggleTheme}
-        className="fixed top-4 right-4 z-50 p-3 rounded-full shadow-lg bg-white text-slate-900 dark:bg-[#0f172a] dark:text-white border border-[#c5c8bd] dark:border-slate-700 hover:scale-105 transition-transform"
+        className="fixed top-4 right-4 z-50 p-3 rounded-full shadow-lg bg-white text-slate-900 dark:bg-[#0f172a] dark:text-white border border-gray-200 dark:border-slate-700 hover:scale-105 transition-transform"
       >
         {isDark ? '☀️ Light' : '🌙 Dark'}
       </button>
 
-      {/* Your Exact Existing Router Architecture */}
       <Router>
         <Routes>
-          {/* Main Routes */}
           <Route path="/" element={user ? <Navigate to="/app" replace /> : <LandingPage />} />
           <Route path="/app" element={<ScannerApp />} />
-
-          {/* Footer Pages */}
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/faq" element={<FAQ />} />
