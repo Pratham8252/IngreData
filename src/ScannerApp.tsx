@@ -825,6 +825,7 @@ export default function ScannerApp() {
                     </motion.div>
                 </div>
             )}
+            </div>
         </div>
     );
 }
