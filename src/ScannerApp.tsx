@@ -670,15 +670,28 @@ export default function ScannerApp() {
                             <div className="w-20 h-20 bg-indigo-500/20 border-2 border-indigo-500 rounded-full mx-auto flex items-center justify-center mb-4"><User className="w-8 h-8 text-indigo-400" /></div>
                             <h2 className="text-white font-bold text-lg">{auth.currentUser?.email}</h2>
                         </div>
+
                         <div className="bg-rose-500/5 border border-rose-500/20 p-6 rounded-[2rem] space-y-4 shadow-xl">
                             <h3 className="text-rose-500 font-bold mb-4">Privacy & Data</h3>
-                            <button onClick={() => setShowDeleteModal(true)} className="w-full bg-red-600/20 border border-red-600/50 hover:bg-red-600 text-red-500 hover:text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2"><AlertOctagon className="w-5 h-5" /> Delete Account</button>
-                            <button onClick={() => setShowSignOutModal(true)} className="w-full bg-white/10 border border-white/10 text-white font-bold py-4 rounded-xl flex justify-center gap-2"><LogOut className="w-5 h-5" /> Sign Out</button>
+
+                            {/* 1. THE RESTORED CLEAR HISTORY BUTTON */}
+                            <button onClick={deleteAllHistory} className="w-full bg-black/40 border border-white/10 hover:border-red-500 text-white hover:text-red-500 font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                <Trash2 className="w-5 h-5" /> Clear History
+                            </button>
+
+                            {/* 2. THE NEW DELETE ACCOUNT BUTTON (Triggers Modal) */}
+                            <button onClick={() => setShowDeleteModal(true)} className="w-full bg-red-600/20 border border-red-600/50 hover:bg-red-600 text-red-500 hover:text-white font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                                <AlertOctagon className="w-5 h-5" /> Delete Account
+                            </button>
                         </div>
-                        <button onClick={() => signOut(auth)} className="w-full bg-white/10 border border-white/10 text-white font-bold py-4 rounded-xl flex justify-center gap-2"><LogOut className="w-5 h-5" /> Sign Out</button>
+
+                        {/* 3. THE NEW SIGN OUT BUTTON (Triggers Modal) */}
+                        <button onClick={() => setShowSignOutModal(true)} className="w-full bg-white/10 border border-white/10 text-white font-bold py-4 rounded-xl flex justify-center gap-2">
+                            <LogOut className="w-5 h-5" /> Sign Out
+                        </button>
+
                     </motion.div>
                 )}
-            </div>
 
             {/* PROMINENT CENTER BOTTOM NAVIGATION */}
             <div className="fixed bottom-0 left-0 w-full bg-slate-950/90 backdrop-blur-2xl border-t border-white/10 pb-safe z-50">
