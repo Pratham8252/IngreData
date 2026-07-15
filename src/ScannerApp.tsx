@@ -46,6 +46,7 @@ export default function ScannerApp() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [showSignOutModal, setShowSignOutModal] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [showClearHistoryModal, setShowClearHistoryModal] = useState(false);
 
     // --- AUTO-LOGIN & FETCH ---
     useEffect(() => {
@@ -123,12 +124,14 @@ export default function ScannerApp() {
     };
 
     const deleteAllHistory = async () => {
-        if (!confirm("WARNING: This will permanently delete all your saved scans. Continue?")) return;
-        for (const scan of scanHistory) {
-            await deleteDoc(doc(db, "scans", scan.id));
+        try {
+            for (const scan of scanHistory) {
+                await deleteDoc(doc(db, "scans", scan.id));
+            }
+            setScanHistory([]);
+        } catch (error) {
+            console.error("Error clearing history:", error);
         }
-        setScanHistory([]);
-        alert("History cleared.");
     };
 
     const handleDeleteAccount = async () => {
@@ -675,7 +678,7 @@ export default function ScannerApp() {
                             <h3 className="text-rose-500 font-bold mb-4">Privacy & Data</h3>
 
                             {/* 1. THE RESTORED CLEAR HISTORY BUTTON */}
-                            <button onClick={deleteAllHistory} className="w-full bg-black/40 border border-white/10 hover:border-red-500 text-white hover:text-red-500 font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
+                            <button onClick={() => setShowClearHistoryModal(true)} className="w-full bg-black/40 border border-white/10 hover:border-red-500 text-white hover:text-red-500 font-bold py-4 rounded-xl transition-colors flex items-center justify-center gap-2">
                                 <Trash2 className="w-5 h-5" /> Clear History
                             </button>
 
@@ -825,6 +828,31 @@ export default function ScannerApp() {
                     </motion.div>
                 </div>
             )}
+                {/* --- CLEAR HISTORY MODAL --- */}
+                {showClearHistoryModal && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            className="bg-slate-900 border border-white/20 p-6 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
+                        >
+                            <button onClick={() => setShowClearHistoryModal(false)} className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/50 hover:text-white transition-colors z-10">
+                                <X className="w-5 h-5" />
+                            </button>
+                            <div className="text-center mb-6 mt-2">
+                                <div className="w-16 h-16 bg-amber-500/20 text-amber-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/30">
+                                    <Trash2 className="w-8 h-8" />
+                                </div>
+                                <h3 className="text-white font-bold text-xl mb-2">Clear History</h3>
+                                <p className="text-white/60 text-sm px-4 mb-6">Are you sure you want to delete all your saved scans? This cannot be undone.</p>
+                                <div className="flex gap-3 justify-center">
+                                    <button onClick={() => setShowClearHistoryModal(false)} className="flex-1 py-3 rounded-2xl font-bold bg-white/10 text-white hover:bg-white/20 transition-colors">Cancel</button>
+                                    <button onClick={() => { setShowClearHistoryModal(false); deleteAllHistory(); }} className="flex-1 py-3 rounded-2xl font-bold bg-amber-500 hover:bg-amber-600 text-white transition-colors">Clear All</button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
             </div>
         </div>
     );
