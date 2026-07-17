@@ -225,14 +225,23 @@ export default function ScannerApp() {
                 generationConfig: { temperature: 0, topK: 1 }
             });
 
-            // PROMPT FIX: Outputs 'intensity' and 'redFlags' to fill your UI boxes.
-            const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON exactly matching this structure:
+            // SYNCHRONIZED PROMPT: Now uses the exact same scoring rules as the single Scanner Mode.
+            const prompt = `Analyze these two food labels. Translate to ${language}. Return ONLY raw JSON exactly matching this structure:
             { 
               "winner": "Product A or Product B", 
-              "reason": "...", 
-              "productA": { "intensity": 85, "redFlags": ["Flag 1", "Flag 2"] }, 
-              "productB": { "intensity": 40, "redFlags": ["Flag 1"] } 
+              "reason": "1 sentence why", 
+              "productA": { "name": "...", "intensity": 85, "redFlags": ["Flag 1", "Flag 2"] }, 
+              "productB": { "name": "...", "intensity": 40, "redFlags": ["Flag 1"] } 
             }
+            
+            STRICT SCORING RUBRIC FOR INTENSITY (0-100):
+            - 0-10: Single whole ingredient.
+            - 11-30: Minimally processed.
+            - 31-70: Moderately processed.
+            - 71-100: Ultra-processed.
+            
+            CRITICAL PENALTY OVERRIDE: You must strictly evaluate ALL ingredients. Do not give a low/healthy score just because the primary ingredient is healthy. If there are ANY artificial flavors, colors, artificial sweeteners, or harmful preservatives, the intensity MUST automatically be 75 or higher.
+
             CRITICAL RULE: If the ingredients of Product A and Product B are identical, do NOT generate a comparison. Return exactly this JSON: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
 
             const result = await model.generateContent([
@@ -241,7 +250,6 @@ export default function ScannerApp() {
                 { inlineData: { data: imgB.base64, mimeType: (imgB as any).mimeType || "image/jpeg" } }
             ]);
 
-            // BULLETPROOF JSON EXTRACTOR
             const rawText = result.response.text();
             const jsonStart = rawText.indexOf('{');
             const jsonEnd = rawText.lastIndexOf('}');
@@ -251,7 +259,6 @@ export default function ScannerApp() {
             const cleanJson = rawText.substring(jsonStart, jsonEnd + 1);
             const parsedData = JSON.parse(cleanJson);
 
-            // TRIGGERS YOUR CUSTOM MODAL
             if (parsedData?.isIdentical === true) {
                 setShowIdenticalModal(true);
                 return;
