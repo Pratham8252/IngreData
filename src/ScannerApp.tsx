@@ -225,7 +225,11 @@ export default function ScannerApp() {
             });
             const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON: { "winner": "Product A or Product B", "reason": "...", "productA": [{name, function, desc}], "productB": [{name, function, desc}] }. CRITICAL RULE: If the ingredients of Product A and Product B are identical (even if the photos look different), do NOT generate a comparison. You MUST return exactly this JSON and nothing else: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
 
-            const result = await model.generateContent([prompt, { inlineData: { data: imgA.base64, mimeType: "image/jpeg" } }, { inlineData: { data: imgB.base64, mimeType: "image/jpeg" } }]);
+            const result = await model.generateContent([
+                prompt,
+                { inlineData: { data: imgA.base64, mimeType: (imgA as any).mimeType || "image/jpeg" } },
+                { inlineData: { data: imgB.base64, mimeType: (imgB as any).mimeType || "image/jpeg" } }
+            ]);
 
             const cleanedText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
             const parsedData = JSON.parse(cleanedText);
@@ -625,14 +629,28 @@ export default function ScannerApp() {
                         <p className="text-white/60 text-sm mb-6">Scan two products to see which is healthier.</p>
                         <div className="flex gap-4">
                             <div className="flex-1">
-                                <input type="file" ref={fileRefA} onChange={(e) => handleImageUpload(e, (url: string) => setImgA(prev => ({ ...prev, url } as any)), (base64: string) => setImgA(prev => ({ ...prev, base64 } as any)))} className="hidden" />
+                                <input type="file" ref={fileRefA} onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => setImgA({ url: URL.createObjectURL(file), base64: (reader.result as string).split(',')[1], mimeType: file.type } as any);
+                                        reader.readAsDataURL(file);
+                                    }
+                                }} className="hidden" />
                                 <div onClick={() => fileRefA.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
                                     {imgA?.url ? <img src={imgA.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product A</p>}
                                 </div>
                             </div>
                             <div className="flex items-center justify-center text-white/30 font-black italic">VS</div>
                             <div className="flex-1">
-                                <input type="file" ref={fileRefB} onChange={(e) => handleImageUpload(e, (url: string) => setImgB(prev => ({ ...prev, url } as any)), (base64: string) => setImgB(prev => ({ ...prev, base64 } as any)))} className="hidden" />
+                                <input type="file" ref={fileRefB} onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                        const reader = new FileReader();
+                                        reader.onloadend = () => setImgB({ url: URL.createObjectURL(file), base64: (reader.result as string).split(',')[1], mimeType: file.type } as any);
+                                        reader.readAsDataURL(file);
+                                    }
+                                }} className="hidden" />
                                 <div onClick={() => fileRefB.current?.click()} className="bg-white/5 border border-dashed border-white/30 h-32 rounded-2xl flex items-center justify-center cursor-pointer relative overflow-hidden">
                                     {imgB?.url ? <img src={imgB.url} className="w-full h-full object-cover opacity-60" /> : <p className="text-white/50 font-bold text-xs">Product B</p>}
                                 </div>
