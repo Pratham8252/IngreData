@@ -900,19 +900,25 @@ export default function ScannerApp() {
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
-                        className="bg-[#1a1c18] border border-[#a2b588]/20 p-6 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
+                        className="bg-slate-900 border border-white/20 p-6 rounded-[2.5rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
                     >
+                        <button onClick={() => setShowIdenticalModal(false)} className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/50 hover:text-white transition-colors z-10">
+                            <X className="w-5 h-5" />
+                        </button>
                         <div className="text-center mb-6 mt-2">
-                            <h3 className="text-[#d8e8b8] font-bold text-xl mb-4">ingredataai.in says</h3>
-                            <p className="text-[#a2b588] text-sm px-2 mb-8 leading-relaxed">These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown of this product.</p>
-                            <div className="flex justify-end">
+                            <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
+                                <Scale className="w-8 h-8" />
+                            </div>
+                            <h3 className="text-white font-bold text-xl mb-2">Identical Products</h3>
+                            <p className="text-white/60 text-sm px-4 mb-6">These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown.</p>
+                            <div className="flex justify-center">
                                 <button
                                     onClick={() => {
                                         setShowIdenticalModal(false);
                                         setImgA(null);
                                         setImgB(null);
                                     }}
-                                    className="px-6 py-2.5 rounded-full font-bold bg-[#cce399] hover:bg-[#b5cc85] text-slate-950 transition-all"
+                                    className="w-full py-3 rounded-2xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
                                 >
                                     OK
                                 </button>
