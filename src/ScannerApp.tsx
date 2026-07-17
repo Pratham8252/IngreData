@@ -34,12 +34,13 @@ export default function ScannerApp() {
     const [saveSuccess, setSaveSuccess] = useState(false);
 
     // COMPARE TAB
-    const [imgA, setImgA] = useState<{ url: string, base64: string } | null>(null);
-    const [imgB, setImgB] = useState<{ url: string, base64: string } | null>(null);
+    const [imgA, setImgA] = useState<{ url: string, base64: string, mimeType: string } | null>(null);
+    const [imgB, setImgB] = useState<{ url: string, base64: string, mimeType: string } | null>(null);
     const [isComparing, setIsComparing] = useState(false);
     const [compareResults, setCompareResults] = useState<any | null>(null);
     const fileRefA = useRef<HTMLInputElement>(null);
     const fileRefB = useRef<HTMLInputElement>(null);
+    const [showIdenticalModal, setShowIdenticalModal] = useState(false);
 
     // HISTORY
     const [scanHistory, setScanHistory] = useState<any[]>([]);
@@ -223,7 +224,16 @@ export default function ScannerApp() {
                 model: "gemini-2.5-flash",
                 generationConfig: { temperature: 0, topK: 1 }
             });
-            const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON: { "winner": "Product A or Product B", "reason": "...", "productA": [{name, function, desc}], "productB": [{name, function, desc}] }. CRITICAL RULE: If the ingredients of Product A and Product B are identical (even if the photos look different), do NOT generate a comparison. You MUST return exactly this JSON and nothing else: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
+
+            // PROMPT FIX: Outputs 'intensity' and 'redFlags' to fill your UI boxes.
+            const prompt = `Analyze these two food labels. Translate to ${language}. Apply strict health penalties for artificial dyes, sweeteners, and preservatives. Return ONLY raw JSON exactly matching this structure:
+            { 
+              "winner": "Product A or Product B", 
+              "reason": "...", 
+              "productA": { "intensity": 85, "redFlags": ["Flag 1", "Flag 2"] }, 
+              "productB": { "intensity": 40, "redFlags": ["Flag 1"] } 
+            }
+            CRITICAL RULE: If the ingredients of Product A and Product B are identical, do NOT generate a comparison. Return exactly this JSON: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
 
             const result = await model.generateContent([
                 prompt,
@@ -231,20 +241,29 @@ export default function ScannerApp() {
                 { inlineData: { data: imgB.base64, mimeType: (imgB as any).mimeType || "image/jpeg" } }
             ]);
 
-            const cleanedText = result.response.text().replace(/```json/g, '').replace(/```/g, '').trim();
-            const parsedData = JSON.parse(cleanedText);
+            // BULLETPROOF JSON EXTRACTOR
+            const rawText = result.response.text();
+            const jsonStart = rawText.indexOf('{');
+            const jsonEnd = rawText.lastIndexOf('}');
 
-            // --- ZERO-RISK SAFETY SHIELD ---
+            if (jsonStart === -1 || jsonEnd === -1) throw new Error("No JSON object found");
+
+            const cleanJson = rawText.substring(jsonStart, jsonEnd + 1);
+            const parsedData = JSON.parse(cleanJson);
+
+            // TRIGGERS YOUR CUSTOM MODAL
             if (parsedData?.isIdentical === true) {
-                setIsComparing(false);
-                alert("These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown of this product.");
+                setShowIdenticalModal(true);
                 return;
             }
-            // -------------------------------
 
             setCompareResults(parsedData);
-        } catch (err) { alert("Comparison failed."); }
-        finally { setIsComparing(false); }
+        } catch (err) {
+            console.error("Versus Mode Crash Details:", err);
+            alert("Comparison failed. Check console for details.");
+        } finally {
+            setIsComparing(false);
+        }
     };
 
     const handleSaveToVault = async () => {
@@ -667,19 +686,16 @@ export default function ScannerApp() {
                                 <h2 className="text-center text-3xl font-black text-emerald-400 mb-4">{compareResults.winner}</h2>
                                 <p className="text-white/80 text-sm text-center mb-6">"{compareResults.reason}"</p>
                                 <div className="space-y-4">
-                                    {[compareResults.productA, compareResults.productB].map((prodArray, idx) => (
+                                    {[compareResults.productA, compareResults.productB].map((prod: any, idx: number) => (
                                         <div key={idx} className="bg-black/30 p-4 rounded-xl border border-white/10">
-                                            <h4 className="text-white font-bold mb-3">{idx === 0 ? "Product A" : "Product B"} Ingredients:</h4>
-                                            <div className="space-y-3">
-                                                {prodArray?.map((ing: any, i: number) => (
-                                                    <div key={i} className="bg-white/5 p-3 rounded-lg border border-white/5">
-                                                        <div className="flex justify-between items-start mb-1">
-                                                            <span className="text-white font-bold text-sm leading-tight">{ing.name}</span>
-                                                            <span className="text-[9px] uppercase font-bold bg-white/10 px-2 py-1 rounded border border-white/10 text-indigo-300 ml-2 shrink-0">{ing.function}</span>
-                                                        </div>
-                                                        <p className="text-white/60 text-xs mt-1 leading-relaxed">{ing.desc}</p>
-                                                    </div>
-                                                ))}
+                                            <div className="flex justify-between items-center mb-4">
+                                                <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">RED FLAGS:</span>
+                                                <span className="text-xs font-bold text-teal-400 border border-teal-500/30 px-3 py-1.5 rounded-lg bg-teal-500/10">
+                                                    Score: {prod?.intensity || '0'}
+                                                </span>
+                                            </div>
+                                            <div className="text-sm text-slate-300">
+                                                {prod?.redFlags?.length > 0 ? prod.redFlags.join(', ') : 'No major red flags detected.'}
                                             </div>
                                         </div>
                                     ))}
@@ -878,6 +894,33 @@ export default function ScannerApp() {
                     </div>
                 )}
             </div>
+            {/* --- IDENTICAL PRODUCTS MODAL --- */}
+            {showIdenticalModal && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-[#1a1c18] border border-[#a2b588]/20 p-6 rounded-[2rem] shadow-[0_0_50px_rgba(0,0,0,0.5)] max-w-sm w-full relative overflow-hidden"
+                    >
+                        <div className="text-center mb-6 mt-2">
+                            <h3 className="text-[#d8e8b8] font-bold text-xl mb-4">ingredataai.in says</h3>
+                            <p className="text-[#a2b588] text-sm px-2 mb-8 leading-relaxed">These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown of this product.</p>
+                            <div className="flex justify-end">
+                                <button
+                                    onClick={() => {
+                                        setShowIdenticalModal(false);
+                                        setImgA(null);
+                                        setImgB(null);
+                                    }}
+                                    className="px-6 py-2.5 rounded-full font-bold bg-[#cce399] hover:bg-[#b5cc85] text-slate-950 transition-all"
+                                >
+                                    OK
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            )}
         </div>
     );
 }
