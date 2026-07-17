@@ -174,11 +174,15 @@ export default function ScannerApp() {
 
         TRANSLATION INSTRUCTION: Translate all output string VALUES (descriptions, names, summaries) into ${language}. DO NOT translate the JSON keys. The JSON keys MUST remain exactly as written below in English.
         
-        STRICT SCORING RUBRIC (0-100):
-        - 0-10: Single whole ingredient.
-        - 11-30: Minimally processed.
-        - 31-70: Moderately processed.
-        - 71-100: Ultra-processed.
+        EVALUATION STANDARD: You must analyze these ingredients strictly according to the official NOVA Food Classification System (Groups 1 through 4).
+
+STRICT DETERMINISTIC SCORING RUBRIC:
+Based on the highest NOVA group detected, assign one of these EXACT processing intensity scores (Do not guess or average):
+- 10 (NOVA Group 1): Unprocessed or minimally processed whole foods.
+- 25 (NOVA Group 2): Processed culinary ingredients (e.g., pressed oils, milled flour, basic salt/sugar).
+- 50 (NOVA Group 3): Processed foods (e.g., canned vegetables, simple bread, cheese made with 2-3 ingredients).
+- 85 (NOVA Group 4 - CRITICAL PENALTY): Ultra-processed foods. If the list contains ANY cosmetic additives, artificial flavors, synthetic colors, artificial sweeteners, or industrial emulsifiers/preservatives, it is strictly Group 4.
+- 100 (HAZARD): Contains known dangerous industrial additives like partially hydrogenated oils/trans fats.
         
         CRITICAL PENALTY OVERRIDE: You must strictly evaluate ALL ingredients. Do not give a low/healthy score just because the primary ingredient is healthy. If there are ANY artificial flavors, colors, artificial sweeteners, or harmful preservatives, the processingIntensity MUST automatically be 75 or higher.
         
@@ -225,22 +229,26 @@ export default function ScannerApp() {
                 generationConfig: { temperature: 0, topK: 1 }
             });
 
-            // SYNCHRONIZED PROMPT: Now uses the exact same scoring rules as the single Scanner Mode.
-            const prompt = `Analyze these two food labels. Translate to ${language}. Return ONLY raw JSON exactly matching this structure:
+            const prompt = `
+            CRITICAL GATEKEEPER RULE: You are an ingredient parser. First, verify that BOTH images explicitly contain readable, printed lists of ingredients. If EITHER image is the front of a package, a logo, blurry, or does not clearly show written ingredients, you MUST immediately abort and return exactly this JSON and nothing else: { "error": "InvalidImage" }
+
+            If and ONLY if BOTH images show clear ingredient lists, analyze them. Translate to ${language}. Return ONLY raw JSON exactly matching this structure:
             { 
               "winner": "Product A or Product B", 
               "reason": "1 sentence why", 
               "productA": { "name": "...", "intensity": 85, "redFlags": ["Flag 1", "Flag 2"] }, 
               "productB": { "name": "...", "intensity": 40, "redFlags": ["Flag 1"] } 
             }
-            
-            STRICT SCORING RUBRIC FOR INTENSITY (0-100):
-            - 0-10: Single whole ingredient.
-            - 11-30: Minimally processed.
-            - 31-70: Moderately processed.
-            - 71-100: Ultra-processed.
-            
-            CRITICAL PENALTY OVERRIDE: You must strictly evaluate ALL ingredients. Do not give a low/healthy score just because the primary ingredient is healthy. If there are ANY artificial flavors, colors, artificial sweeteners, or harmful preservatives, the intensity MUST automatically be 75 or higher.
+
+            EVALUATION STANDARD: You must analyze these ingredients strictly according to the official NOVA Food Classification System (Groups 1 through 4).
+
+            STRICT DETERMINISTIC SCORING RUBRIC (Intensity):
+            Based on the highest NOVA group detected in each product, assign one of these EXACT processing intensity scores (Do not guess or average):
+            - 10 (NOVA Group 1): Unprocessed or minimally processed whole foods.
+            - 25 (NOVA Group 2): Processed culinary ingredients (e.g., pressed oils, milled flour, basic salt/sugar).
+            - 50 (NOVA Group 3): Processed foods (e.g., canned vegetables, simple bread, cheese made with 2-3 ingredients).
+            - 85 (NOVA Group 4 - CRITICAL PENALTY): Ultra-processed foods. If the list contains ANY cosmetic additives, artificial flavors, synthetic colors, artificial sweeteners, or industrial emulsifiers/preservatives, it is strictly Group 4.
+            - 100 (HAZARD): Contains known dangerous industrial additives like partially hydrogenated oils/trans fats.
 
             CRITICAL RULE: If the ingredients of Product A and Product B are identical, do NOT generate a comparison. Return exactly this JSON: { "isIdentical": true, "winner": "None", "reason": "Identical" }`;
 
@@ -259,6 +267,12 @@ export default function ScannerApp() {
             const cleanJson = rawText.substring(jsonStart, jsonEnd + 1);
             const parsedData = JSON.parse(cleanJson);
 
+            // Gatekeeper caught a bad image (logo, blurry, etc.)
+            if (parsedData.error === "InvalidImage") {
+                throw new Error("Invalid image detected.");
+            }
+
+            // Products are the exact same
             if (parsedData?.isIdentical === true) {
                 setShowIdenticalModal(true);
                 return;
@@ -267,7 +281,8 @@ export default function ScannerApp() {
             setCompareResults(parsedData);
         } catch (err) {
             console.error("Versus Mode Crash Details:", err);
-            alert("Comparison failed. Check console for details.");
+            // This triggers your awesome motion tutorial modal!
+            setShowErrorModal(true);
         } finally {
             setIsComparing(false);
         }
@@ -901,7 +916,7 @@ export default function ScannerApp() {
                     </div>
                 )}
             </div>
-            {/* --- IDENTICAL PRODUCTS MODAL --- */}
+            {/* --- IDENTICAL PRODUCTS MODAL WITH CUSTOM ANIMATION --- */}
             {showIdenticalModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
                     <motion.div
@@ -912,24 +927,69 @@ export default function ScannerApp() {
                         <button onClick={() => setShowIdenticalModal(false)} className="absolute top-4 right-4 bg-white/10 p-2 rounded-full text-white/50 hover:text-white transition-colors z-10">
                             <X className="w-5 h-5" />
                         </button>
-                        <div className="text-center mb-6 mt-2">
-                            <div className="w-16 h-16 bg-indigo-500/20 text-indigo-400 rounded-full flex items-center justify-center mx-auto mb-4 border border-indigo-500/30">
-                                <Scale className="w-8 h-8" />
-                            </div>
+
+                        <div className="text-center mt-2 mb-4">
                             <h3 className="text-white font-bold text-xl mb-2">Identical Products</h3>
-                            <p className="text-white/60 text-sm px-4 mb-6">These products have identical ingredient lists. We cannot compare the same item against itself. Please switch to Scan Mode for a complete nutritional breakdown.</p>
-                            <div className="flex justify-center">
-                                <button
-                                    onClick={() => {
-                                        setShowIdenticalModal(false);
-                                        setImgA(null);
-                                        setImgB(null);
-                                    }}
-                                    className="w-full py-3 rounded-2xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
-                                >
-                                    OK
-                                </button>
-                            </div>
+                            <p className="text-white/60 text-sm px-2">These products have the same ingredients. Let's switch to Scan Mode for a full breakdown instead.</p>
+                        </div>
+
+                        {/* --- THE CUSTOM APP ZOOM ANIMATION --- */}
+                        <div className="bg-black/40 rounded-3xl p-6 border border-white/5 h-48 flex items-center justify-center relative overflow-hidden shadow-inner mb-6">
+                            <motion.div
+                                animate={{ scale: [1, 1, 1.4, 1.4, 1], y: [0, 0, -32, -32, 0] }}
+                                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                className="w-24 h-40 border-[3px] border-slate-600 rounded-2xl bg-slate-950 relative flex flex-col justify-between overflow-hidden shadow-lg"
+                            >
+                                {/* Fake App Content UI */}
+                                <div className="flex-1 p-2 space-y-2 opacity-50">
+                                    <div className="w-full h-12 bg-slate-800 rounded flex items-center justify-center">
+                                        <div className="w-6 h-6 rounded-full bg-slate-700"></div>
+                                    </div>
+                                    <div className="w-full h-2 bg-slate-800 rounded"></div>
+                                    <div className="w-3/4 h-2 bg-slate-800 rounded"></div>
+                                </div>
+
+                                {/* 5-Tab Navigation Bar */}
+                                <div className="h-8 bg-slate-900 border-t border-slate-700 flex justify-evenly items-center px-1 relative">
+                                    <div className="w-1.5 h-1.5 rounded-sm bg-slate-700"></div>
+                                    <div className="w-1.5 h-1.5 rounded-sm bg-slate-700"></div>
+
+                                    {/* Middle Tab (Scan) */}
+                                    <motion.div
+                                        animate={{ backgroundColor: ["#334155", "#334155", "#6366f1", "#6366f1", "#334155"], scale: [1, 1, 1.4, 1.4, 1] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                        className="w-4 h-4 rounded-full border border-slate-500 relative z-10 flex items-center justify-center"
+                                    >
+                                        <div className="w-1.5 h-1.5 bg-slate-300 rounded-full"></div>
+                                    </motion.div>
+
+                                    <div className="w-1.5 h-1.5 rounded-sm bg-slate-700"></div>
+                                    <div className="w-1.5 h-1.5 rounded-sm bg-slate-700"></div>
+
+                                    {/* Finger Tap Simulation */}
+                                    <motion.div
+                                        animate={{ x: [25, 0, 0, 25], y: [35, 0, 0, 35], opacity: [0, 1, 1, 0], scale: [1, 0.8, 1, 1] }}
+                                        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                                        className="absolute left-1/2 top-1/2 -ml-[6px] mt-[2px] z-20 pointer-events-none"
+                                    >
+                                        <div className="w-4 h-4 rounded-full bg-white/40 border border-white shadow-[0_0_12px_rgba(255,255,255,1)]"></div>
+                                    </motion.div>
+                                </div>
+                            </motion.div>
+                        </div>
+
+                        <div className="flex justify-center">
+                            <button
+                                onClick={() => {
+                                    setShowIdenticalModal(false);
+                                    setImgA(null);
+                                    setImgB(null);
+                                    setActiveTab('scan');
+                                }}
+                                className="w-full py-3.5 rounded-2xl font-bold bg-indigo-500 hover:bg-indigo-600 text-white transition-all shadow-lg flex justify-center items-center gap-2"
+                            >
+                                <Camera className="w-5 h-5" /> Switch to Scan Mode
+                            </button>
                         </div>
                     </motion.div>
                 </div>
