@@ -649,14 +649,20 @@ export default function ScannerApp() {
                                 <h2 className="text-center text-3xl font-black text-emerald-400 mb-4">{compareResults.winner}</h2>
                                 <p className="text-white/80 text-sm text-center mb-6">"{compareResults.reason}"</p>
                                 <div className="space-y-4">
-                                    {[compareResults.productA, compareResults.productB].map((prod, idx) => (
+                                    {[compareResults.productA, compareResults.productB].map((prodArray, idx) => (
                                         <div key={idx} className="bg-black/30 p-4 rounded-xl border border-white/10">
-                                            <div className="flex justify-between items-center mb-2">
-                                                <span className="text-white font-bold">{prod.name}</span>
-                                                <span className={`px-2 py-1 rounded text-xs font-bold border ${prod.intensity > 50 ? 'border-rose-500 text-rose-400' : 'border-emerald-500 text-emerald-400'}`}>Score: {prod.intensity}</span>
+                                            <h4 className="text-white font-bold mb-3">{idx === 0 ? "Product A" : "Product B"} Ingredients:</h4>
+                                            <div className="space-y-3">
+                                                {prodArray?.map((ing: any, i: number) => (
+                                                    <div key={i} className="bg-white/5 p-3 rounded-lg border border-white/5">
+                                                        <div className="flex justify-between items-start mb-1">
+                                                            <span className="text-white font-bold text-sm leading-tight">{ing.name}</span>
+                                                            <span className="text-[9px] uppercase font-bold bg-white/10 px-2 py-1 rounded border border-white/10 text-indigo-300 ml-2 shrink-0">{ing.function}</span>
+                                                        </div>
+                                                        <p className="text-white/60 text-xs mt-1 leading-relaxed">{ing.desc}</p>
+                                                    </div>
+                                                ))}
                                             </div>
-                                            <p className="text-white/50 text-[10px] uppercase">Red Flags:</p>
-                                            <p className="text-white/80 text-xs">{prod.redFlags?.join(', ')}</p>
                                         </div>
                                     ))}
                                 </div>
